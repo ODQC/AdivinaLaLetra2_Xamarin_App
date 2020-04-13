@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Xamarin.Forms;
-using System.Windows.Markup.Localizer;
-using System.Collections;
-using System.Web;
+
 
 namespace AdivinaLaLetra2
 {
- 
+
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
     [DesignTimeVisible(false)]
@@ -23,25 +16,17 @@ namespace AdivinaLaLetra2
     {
        
         public static string ranS = RandomString();
-        public static string ranS2 = ranS + ranS;
-        public static string ranS1 = Shuffle(ranS2);
         Label labelResult = new Label();
         List<char> termsList = new List<char>();
-       List<Button> GridButtons = new List<Button>();
-        int[,] PossArray;
-        public string ViewResult;
+        List<Button> GridButtons = new List<Button>();
         public string OldBtnName;
 
-        public bool correcto;
         public MainPage()
         {
-           
             InitializeComponent();
             Lisbuttons();
-
-        
-
         }
+
 
         public void Lisbuttons() {
            
@@ -62,7 +47,7 @@ namespace AdivinaLaLetra2
             }
         }
         
-        public static string Shuffle(string str)
+        public static string Shuffle(string str)// metodo que reordena aletoriamente la cadema
         {
             char[] array = str.ToCharArray();
             try
@@ -88,14 +73,6 @@ namespace AdivinaLaLetra2
         }
 
 
-
-        public char RandomChar()
-        {
-            Random rnd = new Random();
-            char randomChar = (char)rnd.Next('a', 'z');
-            return randomChar;
-        }
-
         static string RandomString()
         {
 
@@ -110,8 +87,6 @@ namespace AdivinaLaLetra2
                     string AlphaRandom = new string(Enumerable.Repeat(chars, 1)
                       .Select(s => s[random.Next(s.Length)]).ToArray());
 
-
-
                     if (randStr.Contains(AlphaRandom))
                     {
                         i--;
@@ -119,10 +94,7 @@ namespace AdivinaLaLetra2
                     else
                     {
                         randStr.Add(AlphaRandom);
-
-
                     }
-
 
                 }
             }
@@ -131,33 +103,64 @@ namespace AdivinaLaLetra2
                 Console.WriteLine(ex);
             }
             string rs = string.Join("", randStr.ToArray());
-            return rs;
+            return Shuffle(rs + rs);
         }
+        void ShowVar(int c, System.Object sender)// método para mostrar la letra asignada al boton y poner el boton de color naranja
+        {
+            try
+            {
+                (sender as Button).Text = char.ToString(ranS[c]);
+                (sender as Button).Style = orangeButton;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+        void ShowBlankButton(System.Object sender) // vuelve el botón de colo blanco y oculta la letra asignada
+        {
+            try
+            {
+                (sender as Button).Text = "";
+                (sender as Button).Style = plainButton;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+        Style orangeButton = new Style(typeof(Button))// style para onfigurar botones de color naranja
+        {
+            Setters =
+                {
+                      new Setter { Property = Button.BackgroundColorProperty, Value = Color.FromHex ("#E8AD00") },
+                      new Setter { Property = Button.TextColorProperty, Value = Color.White },
+                      new Setter { Property = Button.BorderRadiusProperty, Value = 0 },
+                      new Setter { Property = Button.FontSizeProperty, Value = 25 }
 
-        private System.Data.DataSet dataSet;
+                }
+        };
 
-     
+        Style plainButton = new Style(typeof(Button)) // style para configurar botones de color blanco
+        {
+            Setters = {
+                      new Setter { Property = Button.BackgroundColorProperty, Value = Color.FromHex ("#eee") },
+                      new Setter { Property = Button.TextColorProperty, Value = Color.Black },
+                      new Setter { Property = Button.BorderRadiusProperty, Value = 0 },
+                      new Setter { Property = Button.FontSizeProperty, Value = 15 }
+                    }
+        };
+
 
         public void Grid1()
         {
-
+            //Implementación de grid
 
             try
             {
-                
-                var darkerButton = new Style(typeof(Button))
-                {
-                    Setters = {
-                  new Setter { Property = Button.BackgroundColorProperty, Value = Color.FromHex ("#ddd") },
-                  new Setter { Property = Button.TextColorProperty, Value = Color.Black },
-                  new Setter { Property = Button.BorderRadiusProperty, Value = 0 },
-                  new Setter { Property = Button.FontSizeProperty, Value = 15 }
-                }
-                };
-                
-
+             
                 Grid controlGrid  = new Grid{ RowSpacing = 1, ColumnSpacing = 1 };
-                controlGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+     
                 controlGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
                 controlGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
                 controlGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
@@ -168,13 +171,7 @@ namespace AdivinaLaLetra2
                 controlGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
                 controlGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
                 controlGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-
-               
-                controlGrid.Children.Add(labelResult, 0, 0);
-
-                Grid.SetColumnSpan(labelResult, 4);
-
-
+                controlGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
                 controlGrid.Children.Add(new Button { Text = "", Style = plainButton }, 0, 1);
                 controlGrid.Children.Add(new Button { Text = "", Style = plainButton }, 1, 1);
@@ -201,8 +198,6 @@ namespace AdivinaLaLetra2
                 controlGrid.Children.Add(new Button { Text = "", Style = plainButton }, 2, 5);
                 controlGrid.Children.Add(new Button { Text = "", Style = plainButton }, 3, 5);
                 controlGrid.Children.Add(new Button { Text = "", Style = plainButton }, 4, 5);
-
-
                 Content = controlGrid;
             }
             catch (Exception ex)
@@ -211,134 +206,62 @@ namespace AdivinaLaLetra2
             }
         }
         
-        void ShowLabel()
-        {
-            labelResult = new Label
-            {
-                Text = ViewResult,
-                HorizontalTextAlignment = TextAlignment.Center,
-                VerticalTextAlignment = TextAlignment.Center,
-                TextColor = Color.Black,
-                FontSize = 25
-                
-            };
-            
-        }
-       
-        
-            Style orangeButton = new Style(typeof(Button))
-            {
-                Setters =
-                {
-                      new Setter { Property = Button.BackgroundColorProperty, Value = Color.FromHex ("#E8AD00") },
-                      new Setter { Property = Button.TextColorProperty, Value = Color.White },
-                      new Setter { Property = Button.BorderRadiusProperty, Value = 0 },
-                      new Setter { Property = Button.FontSizeProperty, Value = 25 }
-                   
-                }
-            };
-
-            Style plainButton = new Style(typeof(Button))
-            {
-                Setters = {
-                      new Setter { Property = Button.BackgroundColorProperty, Value = Color.FromHex ("#eee") },
-                      new Setter { Property = Button.TextColorProperty, Value = Color.Black },
-                      new Setter { Property = Button.BorderRadiusProperty, Value = 0 },
-                      new Setter { Property = Button.FontSizeProperty, Value = 15 }
-                    }
-            };
-        public void GetPositionButton(System.Object sender)
-        {
-            try
-            {
-                int row = Grid.GetRow(sender as Button);
-                int column = Grid.GetColumn(sender as Button);
-                PossArray = new[,] { { row },{ column } };
-               
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
-        void ShowVar(int c, System.Object sender)
-        {
-            try
-            {
-                (sender as Button).Text = char.ToString(ranS1[c]);
-                (sender as Button).Style = orangeButton;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
-        void ShowBlankButton(System.Object sender)
-        {
-            try
-            {
-                (sender as Button).Text = "";
-                (sender as Button).Style = plainButton;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
-        
-        void Button_Clicked(System.Object sender, System.EventArgs e)
+        void Button_Clicked(System.Object sender, System.EventArgs e)// evento button_clicked
             {
 
 
             try
             {
                 var button = (Button)sender;
-                string classId = button.ClassId;
-                string name = button.AutomationId.ToString();
+                string classId = button.ClassId;// se declara variable local que muestra el classId
+                string name = button.AutomationId.ToString();// se declara variable local que muestra automationId
                
-                int c = Int32.Parse(classId);
-                ShowVar(c,(sender as Button));
+                int c = Int32.Parse(classId);//convierte el classId tipo string a int32
+                ShowVar(c,(sender as Button));// se asigna la la letra al boton segun su classId
                
-                termsList.Add(ranS1[c]);
-               
+                
 
 
-               if (termsList.Count.Equals(0))
+               if (termsList.Count.Equals(0))// el primer botón seleccionado
                 {
-                    ViewResult = "Adivina la Letra";
+                    
+                    termsList.Add(ranS[c]);// se adiere la letra que se le asignó al botón a una lista para luego compararla con la del siguiente botón
+                    OldBtnName = name;// el 
                 }
-                else if (termsList.Last().Equals(c))
+                else if (termsList.Last().Equals(ranS[c])) // si la letra del primer botón asignado coincide con el segundo
                 {
-                    ViewResult = "Correcto!";
+                    
                     (sender as Button).IsEnabled = false;
-
-                }
-                else{
                     foreach (var item in GridButtons)
                     {
                         if (item.AutomationId.Equals(OldBtnName))
                         {
-                            ShowBlankButton(item);
+                            item.IsEnabled = false;
                         }
                     }
-
+                    OldBtnName = null; // limpiada OldbtnName para que no quite la coincidencia
                 }
-                
-                ShowLabel();
-                OldBtnName = name;
+                else{ // si no coinciden
+                    foreach (var item in GridButtons) 
+                    {
+                        if (item.AutomationId.Equals(OldBtnName))
+                        {
+                            ShowBlankButton(item);// se oculta el primer botón
+                            termsList.Add(ranS[c]);// se adiere la letra que se le asignó al botón a una lista para luego compararla con la del siguiente botón
+                           
+                        }
+                    }
+                    OldBtnName = name;//guarda el AutomationId del último botón usado
+                }
+      
+         
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
             }
 
-            }
-
-        void enableAllButtons()
-        {
-           
         }
-
 
     }
 }

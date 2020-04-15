@@ -7,7 +7,7 @@ using Xamarin.Forms;
 
 namespace AdivinaLaLetra2
 {
-
+ 
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
     [DesignTimeVisible(false)]
@@ -19,6 +19,7 @@ namespace AdivinaLaLetra2
         Label labelResult = new Label();
         List<char> termsList = new List<char>();
         List<Button> GridButtons = new List<Button>();
+        
         public string OldBtnName;
 
         public MainPage()
@@ -44,6 +45,7 @@ namespace AdivinaLaLetra2
                 GridButtons.Add(LetterBtn10); GridButtons.Add(LetterBtn22);
                 GridButtons.Add(LetterBtn11); GridButtons.Add(LetterBtn23);
                 GridButtons.Add(LetterBtn12); GridButtons.Add(LetterBtn24);
+
             }
         }
         
@@ -71,7 +73,6 @@ namespace AdivinaLaLetra2
             }
             return new string(array);
         }
-
 
         static string RandomString()
         {
@@ -105,53 +106,28 @@ namespace AdivinaLaLetra2
             string rs = string.Join("", randStr.ToArray());
             return Shuffle(rs + rs);
         }
-        void ShowVar(int c, System.Object sender)// método para mostrar la letra asignada al boton y poner el boton de color naranja
-        {
-            try
+         Style orangeButton = new Style(typeof(Button))// style para onfigurar botones de color naranja
             {
-                (sender as Button).Text = char.ToString(ranS[c]);
-                (sender as Button).Style = orangeButton;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
-        void ShowBlankButton(System.Object sender) // vuelve el botón de colo blanco y oculta la letra asignada
-        {
-            try
-            {
-                (sender as Button).Text = "";
-                (sender as Button).Style = plainButton;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
-        Style orangeButton = new Style(typeof(Button))// style para onfigurar botones de color naranja
-        {
-            Setters =
+                Setters =
                 {
                       new Setter { Property = Button.BackgroundColorProperty, Value = Color.FromHex ("#E8AD00") },
                       new Setter { Property = Button.TextColorProperty, Value = Color.White },
                       new Setter { Property = Button.BorderRadiusProperty, Value = 0 },
                       new Setter { Property = Button.FontSizeProperty, Value = 25 }
-
+                   
                 }
-        };
+            };
 
-        Style plainButton = new Style(typeof(Button)) // style para configurar botones de color blanco
-        {
-            Setters = {
+            Style plainButton = new Style(typeof(Button)) // style para configurar botones de color blanco
+            {
+                Setters = {
                       new Setter { Property = Button.BackgroundColorProperty, Value = Color.FromHex ("#eee") },
                       new Setter { Property = Button.TextColorProperty, Value = Color.Black },
                       new Setter { Property = Button.BorderRadiusProperty, Value = 0 },
                       new Setter { Property = Button.FontSizeProperty, Value = 15 }
                     }
-        };
-
-
+            };
+       
         public void Grid1()
         {
             //Implementación de grid
@@ -198,7 +174,33 @@ namespace AdivinaLaLetra2
                 controlGrid.Children.Add(new Button { Text = "", Style = plainButton }, 2, 5);
                 controlGrid.Children.Add(new Button { Text = "", Style = plainButton }, 3, 5);
                 controlGrid.Children.Add(new Button { Text = "", Style = plainButton }, 4, 5);
+
+
                 Content = controlGrid;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+        void ShowVar(int c, System.Object sender)// método para mostrar la letra asignada al boton y poner el boton de color naranja
+        {
+            try
+            {
+                (sender as Button).Text = char.ToString(ranS[c]);
+                (sender as Button).Style = orangeButton;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+        void ShowBlankButton(System.Object sender) // vuelve el botón de colo blanco y oculta la letra asignada
+        {
+            try
+            {
+                (sender as Button).Text = "";
+                (sender as Button).Style = plainButton;
             }
             catch (Exception ex)
             {
@@ -208,21 +210,15 @@ namespace AdivinaLaLetra2
         
         void Button_Clicked(System.Object sender, System.EventArgs e)// evento button_clicked
             {
-
-
             try
             {
                 var button = (Button)sender;
                 string classId = button.ClassId;// se declara variable local que muestra el classId
                 string name = button.AutomationId.ToString();// se declara variable local que muestra automationId
-               
+                (sender as Button).IsEnabled = false;
                 int c = Int32.Parse(classId);//convierte el classId tipo string a int32
                 ShowVar(c,(sender as Button));// se asigna la la letra al boton segun su classId
-               
-                
-
-
-               if (termsList.Count.Equals(0))// el primer botón seleccionado
+                if (termsList.Count.Equals(0))// el primer botón seleccionado
                 {
                     
                     termsList.Add(ranS[c]);// se adiere la letra que se le asignó al botón a una lista para luego compararla con la del siguiente botón
@@ -230,8 +226,6 @@ namespace AdivinaLaLetra2
                 }
                 else if (termsList.Last().Equals(ranS[c])) // si la letra del primer botón asignado coincide con el segundo
                 {
-                    
-                    (sender as Button).IsEnabled = false;
                     foreach (var item in GridButtons)
                     {
                         if (item.AutomationId.Equals(OldBtnName))
@@ -246,14 +240,14 @@ namespace AdivinaLaLetra2
                     {
                         if (item.AutomationId.Equals(OldBtnName))
                         {
+                            
                             ShowBlankButton(item);// se oculta el primer botón
                             termsList.Add(ranS[c]);// se adiere la letra que se le asignó al botón a una lista para luego compararla con la del siguiente botón
-                           
+                            item.IsEnabled = true;
                         }
                     }
                     OldBtnName = name;//guarda el AutomationId del último botón usado
                 }
-      
          
             }
             catch (Exception ex)
